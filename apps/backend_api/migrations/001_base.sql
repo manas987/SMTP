@@ -1,22 +1,18 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL
+    password_hash TEXT NOT NULL,
+    api_key_hash TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE orgs (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TYPE user_role AS ENUM ('admin', 'member');
 
-CREATE TABLE membership (
-    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    org_id INT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
-    role user_role NOT NULL DEFAULT 'member',
-    PRIMARY KEY (user_id, org_id)
-);
 
 CREATE TABLE lists (
     id SERIAL PRIMARY KEY,
@@ -27,7 +23,8 @@ CREATE TABLE lists (
 CREATE TABLE list_members (
     id SERIAL PRIMARY KEY,
     list_id INT NOT NULL REFERENCES lists(id) ON DELETE CASCADE,
-    email TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL,
+    UNIQUE (list_id, email)
 );
 
 CREATE TABLE senders (
@@ -48,12 +45,3 @@ CREATE TABLE sending_domains (
     UNIQUE (org_id, domain)
 );
 
-CREATE TABLE api_keys (
-    id SERIAL PRIMARY KEY,
-    org_id INT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    key_hash TEXT NOT NULL,
-    prefix TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    revoked_at TIMESTAMPTZ
-);
