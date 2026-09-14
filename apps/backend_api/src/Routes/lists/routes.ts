@@ -3,7 +3,6 @@ import { authMiddleware } from "../../middleware/auth";
 import { pool } from "../../../migrations/db";
 import {
   createListSchema,
-  readListsSchema,
   readListMembersSchema,
   updateListSchema,
   addListMemberSchema,
@@ -24,27 +23,17 @@ listRoutes.post("/list/create", authMiddleware, async (req, res) => {
   }
 
   const userId = res.locals.userId;
-  const { orgId, name } = checkInput.data;
+  const { name } = checkInput.data;
 
   try {
     const result = await pool.query(
       `
-      INSERT INTO lists (org_id, name)
-      SELECT id, $2
-      FROM orgs
-      WHERE id = $1
-        AND user_id = $3
-      RETURNING id, org_id, name
+      INSERT INTO lists (user_id, name)
+      VALUES ($1, $2)
+      RETURNING id, name
       `,
-      [orgId, name, userId],
+      [userId, name],
     );
-
-    if (!result.rowCount) {
-      return res.status(404).json({
-        status: "error",
-        error: "organization not found",
-      });
-    }
 
     return res.status(201).json({
       status: "success",
@@ -61,32 +50,17 @@ listRoutes.post("/list/create", authMiddleware, async (req, res) => {
 });
 
 listRoutes.get("/list/read", authMiddleware, async (req, res) => {
-  const checkInput = readListsSchema.safeParse(req.query);
-
-  if (!checkInput.success) {
-    return res.status(400).json({
-      status: "error",
-      error: "invalid input",
-    });
-  }
-
   const userId = res.locals.userId;
-  const { orgId } = checkInput.data;
 
   try {
     const result = await pool.query(
       `
-      SELECT
-        lists.id,
-        lists.name
+      SELECT id, name
       FROM lists
-           JOIN orgs
-        ON orgs.id = lists.org_id
-      WHERE lists.org_id = $1
-        AND orgs.user_id = $2
-      ORDER BY lists.id ASC
+      WHERE user_id = $1
+      ORDER BY id ASC
       `,
-      [orgId, userId],
+      [userId],
     );
 
     return res.status(200).json({
@@ -123,12 +97,10 @@ listRoutes.get("/list/members/read", authMiddleware, async (req, res) => {
           list_members.id,
           list_members.email
         FROM list_members
-           JOIN lists
+        JOIN lists
           ON lists.id = list_members.list_id
-           JOIN orgs
-          ON orgs.id = lists.org_id
         WHERE list_members.list_id = $1
-          AND orgs.user_id = $2
+          AND lists.user_id = $2
         ORDER BY list_members.id ASC
         `,
       [listId, userId],
@@ -166,14 +138,9 @@ listRoutes.patch("/list/update", authMiddleware, async (req, res) => {
       `
       UPDATE lists
       SET name = $1
-      WHERE lists.id = $2
-        AND EXISTS (
-          SELECT 1
-          FROM orgs
-          WHERE orgs.id = lists.org_id
-            AND orgs.user_id = $3
-        )
-      RETURNING id, org_id, name
+      WHERE id = $2
+        AND user_id = $3
+      RETURNING id, name
       `,
       [name, listId, userId],
     );
@@ -220,10 +187,8 @@ listRoutes.post("/list/member/add", authMiddleware, async (req, res) => {
         WHERE EXISTS (
           SELECT 1
           FROM lists
-               JOIN orgs
-            ON orgs.id = lists.org_id
           WHERE lists.id = $1
-            AND orgs.user_id = $3
+            AND lists.user_id = $3
         )
         RETURNING id, list_id, email
         `,
@@ -273,10 +238,8 @@ listRoutes.delete("/list/member/delete", authMiddleware, async (req, res) => {
           AND EXISTS (
             SELECT 1
             FROM lists
-               JOIN orgs
-              ON orgs.id = lists.org_id
             WHERE lists.id = $1
-              AND orgs.user_id = $3
+              AND lists.user_id = $3
           )
         RETURNING id, list_id, email
         `,
@@ -321,14 +284,9 @@ listRoutes.delete("/list/delete", authMiddleware, async (req, res) => {
     const result = await pool.query(
       `
       DELETE FROM lists
-      WHERE lists.id = $1
-        AND EXISTS (
-          SELECT 1
-          FROM orgs
-          WHERE orgs.id = lists.org_id
-            AND orgs.user_id = $2
-        )
-      RETURNING id, org_id, name
+      WHERE id = $1
+        AND user_id = $2
+      RETURNING id, name
       `,
       [listId, userId],
     );

@@ -1,15 +1,18 @@
 import { Router } from "express";
 import { authRoutes } from "./Routes/auth/routes";
-import { orgRoutes } from "./Routes/org/routes";
+import { listRoutes } from "./Routes/lists/routes";
+import { emailRoutes } from "./Routes/email/routes";
+import { senderMailRoutes } from "./Routes/sender/routes";
+import { domainRoutes } from "./Routes/domain/routes";
 
 export const router = Router();
 
 router.use("/auth", authRoutes);
 
-router.use("/org", orgRoutes);
+router.use("/list", listRoutes);
 
-router.get("/list", () => {});
+router.use("/email", emailRoutes);
 
-router.post("/email", () => {});
+router.use("/sender", senderMailRoutes);
 
-router.post("/emails", () => {});
+router.use("domain", domainRoutes);

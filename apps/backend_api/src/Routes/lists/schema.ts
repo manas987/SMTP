@@ -1,33 +1,30 @@
 import z from "zod";
 
 export const createListSchema = z.object({
-  orgId: z.coerce.number().int().positive(),
-  name: z.string().trim().min(1).max(100),
+  name: z.string().min(1),
 });
 
-export const readListsSchema = z.object({
-  orgId: z.coerce.number().int().positive(),
-});
+export const readListsSchema = z.object({});
 
 export const readListMembersSchema = z.object({
-  listId: z.coerce.number().int().positive(),
+  listId: z.int().positive(),
 });
 
 export const updateListSchema = z.object({
-  listId: z.coerce.number().int().positive(),
-  name: z.string().trim().min(1).max(100),
+  listId: z.int().positive(),
+  name: z.string().min(1),
 });
 
 export const addListMemberSchema = z.object({
-  listId: z.coerce.number().int().positive(),
-  email: z.string().trim().email(),
+  listId: z.int().positive(),
+  email: z.string().email(),
 });
 
 export const deleteListMemberSchema = z.object({
-  listId: z.coerce.number().int().positive(),
-  email: z.string().trim().email(),
+  listId: z.int().positive(),
+  email: z.string().email(),
 });
 
 export const deleteListSchema = z.object({
-  listId: z.coerce.number().int().positive(),
+  listId: z.int().positive(),
 });
