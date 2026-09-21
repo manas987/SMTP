@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "../../middleware/auth";
 import { pool } from "../../../migrations/db";
 import { sendListEmailSchema, sendSingleEmailSchema } from "./schema";
+import { emailQueue } from "../../queue";
 
 export const emailRoutes = Router();
 
@@ -50,8 +51,8 @@ emailRoutes.post("/send/list", authMiddleware, async (req, res) => {
 
     for (const recipient of recipients) {
       await emailQueue.add("send-email", {
-        to: recipient,
         from: senderEmail,
+        to: recipient,
         subject,
         body,
       });
@@ -107,11 +108,43 @@ emailRoutes.post("/send/one", authMiddleware, async (req, res) => {
     const sender = result.rows[0];
 
     await emailQueue.add("send-email", {
-      to,
       from: sender.email,
+      to,
       subject,
       body,
     });
+
+    return res.status(202).json({
+      status: "success",
+      message: "email queued",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      status: "error",
+      error: "internal server error",
+    });
+  }
+});
+
+emailRoutes.post("/send/one/dev", async (req, res) => {
+  const userId = res.locals.userId;
+  const { to, from, subject, body } = req.body;
+
+  try {
+    console.log("nigga");
+
+    const job = await emailQueue.add("send-email", {
+      from,
+      to,
+      subject,
+      body,
+    });
+
+    console.log("JOB ADDED:", job.id);
+
+    console.log("nigga");
 
     return res.status(202).json({
       status: "success",

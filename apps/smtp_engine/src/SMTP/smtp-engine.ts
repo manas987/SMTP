@@ -70,8 +70,8 @@ export async function smtpEngine({ from, to, subject, body }: EngineType) {
   console.log(`Connecting to ${mxHost}:25`);
 
   const socket = net.createConnection({
-    host: mxHost,
-    port: 25,
+    host: "localhost",
+    port: 1025,
   });
 
   await new Promise<void>((resolve, reject) => {

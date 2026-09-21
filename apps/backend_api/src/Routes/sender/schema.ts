@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const createSenderSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: z.string().email(),
 });
 
 export const deleteSenderSchema = z.object({

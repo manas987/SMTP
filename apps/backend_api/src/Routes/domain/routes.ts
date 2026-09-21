@@ -230,31 +230,11 @@ domainRoutes.delete("/domain/delete", authMiddleware, async (req, res) => {
       });
     }
 
-    const domain = domainResult.rows[0].domain;
-
-    const senderResult = await pool.query(
-      `
-        SELECT id
-        FROM senders
-        WHERE user_id = $1
-          AND split_part(email, '@', 2) = $2
-        LIMIT 1
-        `,
-      [userId, domain],
-    );
-
-    if (senderResult.rowCount) {
-      return res.status(409).json({
-        status: "error",
-        error: "remove senders using this domain first",
-      });
-    }
-
     const result = await pool.query(
       `
         DELETE FROM sending_domains
         WHERE id = $1
-          AND user_id = $2
+          AND user_id = $2 
         RETURNING id, domain
         `,
       [domainId, userId],

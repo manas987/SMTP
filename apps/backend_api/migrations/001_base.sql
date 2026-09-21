@@ -41,5 +41,6 @@ CREATE TABLE sending_domains (
 CREATE TABLE senders (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    email TEXT NOT NULL UNIQUE
+    email TEXT NOT NULL UNIQUE,
+    domain INT NOT NULL REFERENCES sending_domains(id) ON DELETE CASCADE
 );

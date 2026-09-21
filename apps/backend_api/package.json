@@ -2,6 +2,9 @@
   "name": "api_gateway",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts"
+  },
   "private": true,
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -15,8 +18,10 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "bullmq": "^6.3.6",
     "crypto": "^1.0.1",
     "express": "^5.2.1",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
     "zod": "^4.6.2"
