@@ -2,12 +2,24 @@ import { resolve4, resolve6, resolveMx } from "node:dns/promises";
 import net from "node:net";
 import tls from "node:tls";
 import { SMTPError } from "./error";
+import { buildMimeMessage, type EmailAttachment } from "./mime";
+
+import { signDkimMessage } from "./dkim";
+
+type DkimConfig = {
+  domain: string;
+  selector: string;
+  privateKey: string;
+};
 
 type EngineType = {
   from: string;
   to: string;
   subject: string;
   body: string;
+  html?: string;
+  attachments?: EmailAttachment[];
+  dkim?: DkimConfig;
 };
 
 type SMTPResponse = {
@@ -45,6 +57,31 @@ function createSMTPError(code: number, message: string): SMTPError {
   }
 
   throw new Error(message);
+}
+
+function dotStuffMessage(message: string): string {
+  const normalized = message
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/\n/g, "\r\n");
+
+  const lines = normalized.split("\r\n");
+
+  const stuffedLines = lines.map((line) => {
+    if (line.startsWith(".")) {
+      return `.${line}`;
+    }
+
+    return line;
+  });
+
+  let result = stuffedLines.join("\r\n");
+
+  if (!result.endsWith("\r\n")) {
+    result += "\r\n";
+  }
+
+  return `${result}.\r\n`;
 }
 
 function readResponse(
@@ -274,6 +311,9 @@ async function deliverToMX(
   to: string,
   subject: string,
   body: string,
+  html?: string,
+  attachments?: EmailAttachment[],
+  dkim?: DkimConfig,
 ) {
   let socket: net.Socket | tls.TLSSocket | undefined;
 
@@ -340,6 +380,17 @@ async function deliverToMX(
       );
     }
 
+    const mimeMessage = buildMimeMessage({
+      from,
+      to,
+      subject,
+      text: body,
+      html,
+      attachments,
+    });
+
+    const message = dkim ? signDkimMessage(mimeMessage, dkim) : mimeMessage;
+
     const dataResponse = await sendCommand(socket, "DATA");
 
     if (dataResponse.code !== 354) {
@@ -349,20 +400,7 @@ async function deliverToMX(
       );
     }
 
-    const message = [
-      `From: ${from}`,
-      `To: ${to}`,
-      `Subject: ${subject}`,
-      `MIME-Version: 1.0`,
-      `Content-Type: text/plain; charset=utf-8`,
-      "",
-      body,
-      "",
-      ".",
-      "",
-    ].join("\r\n");
-
-    socket.write(message);
+    socket.write(dotStuffMessage(message));
 
     const sent = await readResponse(socket);
 
@@ -388,7 +426,15 @@ async function deliverToMX(
   }
 }
 
-export async function smtpEngine({ from, to, subject, body }: EngineType) {
+export async function smtpEngine({
+  from,
+  to,
+  subject,
+  body,
+  html,
+  attachments,
+  dkim,
+}: EngineType) {
   const atIndex = to.lastIndexOf("@");
 
   if (atIndex === -1) {
@@ -433,7 +479,16 @@ export async function smtpEngine({ from, to, subject, body }: EngineType) {
     console.log(`Trying MX ${mx.exchange} priority=${mx.priority}`);
 
     try {
-      await deliverToMX(mx.exchange, from, to, subject, body);
+      await deliverToMX(
+        mx.exchange,
+        from,
+        to,
+        subject,
+        body,
+        html,
+        attachments,
+        dkim,
+      );
 
       return;
     } catch (error) {
