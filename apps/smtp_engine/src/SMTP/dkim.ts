@@ -79,16 +79,10 @@ function canonicalizeRelaxedBody(body: string): string {
     return line;
   });
 
-  /*
-   * Relaxed body canonicalization ignores empty lines at the end.
-   */
   while (lines.length > 0 && lines[lines.length - 1] === "") {
     lines.pop();
   }
 
-  /*
-   * Empty body is represented by one CRLF.
-   */
   return `${lines.join("\r\n")}\r\n`;
 }
 
@@ -109,10 +103,6 @@ function findHeader(
 ): ParsedHeader | undefined {
   const wanted = name.toLowerCase();
 
-  /*
-   * DKIM signs the last matching instance first when duplicate
-   * headers exist. Our generated MIME has one instance of each.
-   */
   for (let i = headers.length - 1; i >= 0; i--) {
     if (headers[i]!.name.toLowerCase() === wanted) {
       return headers[i];

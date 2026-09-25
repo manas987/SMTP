@@ -33,17 +33,10 @@ function assertSafeHeader(name: string, value: string): void {
 function encodeHeaderValue(value: string): string {
   assertSafeHeader("header", value);
 
-  // ASCII headers can remain unchanged.
   if (!/[^\x20-\x7E]/.test(value)) {
     return value;
   }
 
-  /*
-   * Simple RFC 2047 encoded-word implementation.
-   *
-   * We keep each UTF-8 chunk small so the resulting encoded-word
-   * stays well below normal header line limits.
-   */
   const chunks: string[] = [];
   let current = "";
 
@@ -178,13 +171,6 @@ export function buildMimeMessage(input: MimeInput): string {
   let contentBody: string;
   let contentType: string;
 
-  /*
-   * No attachment
-   *
-   * text only
-   * html only
-   * text + html => multipart/alternative
-   */
   if (attachments.length === 0) {
     if (input.html !== undefined) {
       const htmlPart = createTextPart(input.html, "text/html");
@@ -199,16 +185,6 @@ export function buildMimeMessage(input: MimeInput): string {
       contentBody = textPart;
     }
   } else {
-    /*
-     * Attachments:
-     *
-     * multipart/mixed
-     *
-     * first part is either:
-     *   text/plain
-     *   text/html
-     *   multipart/alternative
-     */
     let mainPart: string;
 
     if (input.html !== undefined) {
