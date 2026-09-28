@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-28T00:00:00.000Z",
+  "title": "Design System: Postmaster Dashboard",
+  "extensions": {
+    "themeSource": {
+      "file": "src/index.css",
+      "note": "Colour is declared once as --c-* properties on :root, redefined for dark under both @media (prefers-color-scheme: dark) { :root:not([data-theme=\"light\"]) } and :root[data-theme=\"dark\"], then bridged to Tailwind with @theme inline. Tailwind v4 via bun-plugin-tailwind; no tailwind.config file exists and none should be added. Frontmatter colors are the light values; the dark value of each token is carried here as darkValue."
+    },
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Signal Blue", "canonical": "#2563eb", "darkValue": "#6098ff", "cssVar": "--c-accent", "tonalRamp": ["oklch(25% 0.13 262)", "oklch(35% 0.17 262)", "oklch(45% 0.21 262)", "oklch(55% 0.22 262)", "oklch(65% 0.18 262)", "oklch(75% 0.13 262)", "oklch(86% 0.07 262)", "oklch(96% 0.02 262)"] },
+      "accent-hover": { "role": "primary", "displayName": "Signal Blue Pressed", "canonical": "#1d4ed8", "darkValue": "#7fadff", "cssVar": "--c-accent-hover" },
+      "accent-ink": { "role": "primary", "displayName": "Blue Ink", "canonical": "#ffffff", "darkValue": "#06121f", "cssVar": "--c-accent-ink" },
+      "accent-soft": { "role": "primary", "displayName": "Blue Wash", "canonical": "#eef4ff", "darkValue": "#15233a", "cssVar": "--c-accent-soft" },
+      "ok": { "role": "tertiary", "displayName": "Verified Green", "canonical": "#15803d", "darkValue": "#5fd68a", "cssVar": "--c-ok", "tonalRamp": ["oklch(22% 0.06 150)", "oklch(32% 0.09 150)", "oklch(42% 0.12 150)", "oklch(52% 0.14 150)", "oklch(64% 0.14 150)", "oklch(76% 0.11 150)", "oklch(87% 0.07 150)", "oklch(96% 0.02 150)"] },
+      "ok-soft": { "role": "tertiary", "displayName": "Green Wash", "canonical": "#f1faf3", "darkValue": "#10251a", "cssVar": "--c-ok-soft" },
+      "warn": { "role": "tertiary", "displayName": "Attention Amber", "canonical": "#9a5b06", "darkValue": "#f0b429", "cssVar": "--c-warn", "tonalRamp": ["oklch(22% 0.05 70)", "oklch(32% 0.08 70)", "oklch(44% 0.10 70)", "oklch(55% 0.12 70)", "oklch(67% 0.13 70)", "oklch(79% 0.12 70)", "oklch(89% 0.07 70)", "oklch(97% 0.02 70)"] },
+      "warn-soft": { "role": "tertiary", "displayName": "Amber Wash", "canonical": "#fdf8ec", "darkValue": "#2a1f08", "cssVar": "--c-warn-soft" },
+      "bad": { "role": "tertiary", "displayName": "Failure Red", "canonical": "#b42318", "darkValue": "#f98b84", "cssVar": "--c-bad", "tonalRamp": ["oklch(22% 0.08 27)", "oklch(32% 0.12 27)", "oklch(43% 0.16 27)", "oklch(53% 0.19 27)", "oklch(65% 0.17 27)", "oklch(77% 0.12 27)", "oklch(88% 0.06 27)", "oklch(97% 0.02 27)"] },
+      "bad-soft": { "role": "tertiary", "displayName": "Red Wash", "canonical": "#fdf3f2", "darkValue": "#2a1413", "cssVar": "--c-bad-soft" },
+      "ground": { "role": "neutral", "displayName": "Content Ground", "canonical": "#ffffff", "darkValue": "#0c0a09", "cssVar": "--c-ground", "tonalRamp": ["oklch(15% 0.004 50)", "oklch(25% 0.005 50)", "oklch(38% 0.006 50)", "oklch(50% 0.007 50)", "oklch(63% 0.006 50)", "oklch(76% 0.005 50)", "oklch(88% 0.004 50)", "oklch(99% 0.002 50)"] },
+      "panel": { "role": "neutral", "displayName": "Rail Panel", "canonical": "#fafaf9", "darkValue": "#131110", "cssVar": "--c-panel" },
+      "raised": { "role": "neutral", "displayName": "Raised Surface", "canonical": "#ffffff", "darkValue": "#1a1715", "cssVar": "--c-raised" },
+      "sunken": { "role": "neutral", "displayName": "Sunken Surface", "canonical": "#f5f4f2", "darkValue": "#221e1b", "cssVar": "--c-sunken" },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#e8e5e2", "darkValue": "#2a2523", "cssVar": "--c-line" },
+      "line-strong": { "role": "neutral", "displayName": "Hairline Strong", "canonical": "#d5d1cc", "darkValue": "#403a37", "cssVar": "--c-line-strong" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1c1917", "darkValue": "#fafaf9", "cssVar": "--c-ink", "tonalRamp": ["oklch(16% 0.006 50)", "oklch(26% 0.008 50)", "oklch(37% 0.009 50)", "oklch(48% 0.010 50)", "oklch(60% 0.009 50)", "oklch(73% 0.007 50)", "oklch(86% 0.005 50)", "oklch(97% 0.003 50)"] },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#56514c", "darkValue": "#b3aaa4", "cssVar": "--c-ink-muted" },
+      "ink-faint": { "role": "neutral", "displayName": "Ink Faint", "canonical": "#78716c", "darkValue": "#8b827c", "cssVar": "--c-ink-faint", "contrast": { "light": "4.84:1 on #ffffff", "dark": "5.15:1 on #0c0a09" }, "note": "Contrast floor of the system and the global ::placeholder colour. Never lighten below 4.5:1." }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page title in PageHead and the auth headline. One per screen." },
+      "headline": { "displayName": "Verdict", "purpose": "The Overview readiness sentence only — the sole 20px text in the system, uncontained, max 62ch." },
+      "title": { "displayName": "Title", "purpose": "Panel headers, empty-state headings, the wordmark." },
+      "body": { "displayName": "Body", "purpose": "The working size: rows, descriptions, buttons, nav, field labels. Measure capped 58-70ch." },
+      "label": { "displayName": "Chip Label", "purpose": "Uppercase 11px label inside status chips only. Not an eyebrow or kicker device." },
+      "mono": { "displayName": "Machine Value", "purpose": "DNS records, keys, selectors, domains, addresses, tokens. Tabular numerals in code/pre/table." }
+    },
+    "fonts": [
+      { "family": "Archivo", "weights": "100 900", "stretch": "62% 125%", "file": "src/fonts/archivo.woff2", "hosting": "self-hosted variable woff2, latin subset, inlined as a data URI by Bun's CSS bundler", "display": "swap" },
+      { "family": "JetBrains Mono", "weights": "100 800", "file": "src/fonts/jetbrains-mono.woff2", "hosting": "self-hosted variable woff2, latin subset, inlined as a data URI by Bun's CSS bundler", "display": "swap" }
+    ],
+    "shadows": [
+      { "name": "pop", "value": "0 1px 2px hsl(var(--c-shadow) / 0.06), 0 8px 24px -6px hsl(var(--c-shadow) / 0.16)", "purpose": "The only shadow token. Floating notice toast. Tint flips with theme via --c-shadow (24 10% 10% light, 0 0% 0% dark). Resting elements carry no shadow." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The single easing curve; used by both animation utilities." },
+      { "name": "rise", "value": "rise 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards", "purpose": "Staggers list rows (35ms per index) as loaded data lands. Animates from opacity 0.001 / translateY(6px) toward the visible default." },
+      { "name": "reveal", "value": "reveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) backwards", "purpose": "Only for content that appears because the user just acted. From opacity 0.001 / translateY(-4px) scale(0.985), origin top center." },
+      { "name": "transition-colors", "value": "150ms", "purpose": "All interactive feedback. Nothing translates, scales or shadows on hover." },
+      { "name": "reduced-motion", "value": "animation: none", "purpose": "Both .rise and .reveal are disabled under prefers-reduced-motion: reduce; neither hides content when it does not run." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ],
+    "layout": [
+      { "name": "rail", "value": "240px", "purpose": "Fixed sidebar column at lg and up; collapses to a sticky bar plus inline disclosure below it." },
+      { "name": "content-max", "value": "1120px", "purpose": "Centred content column." },
+      { "name": "measure", "value": "58ch / 62ch / 68ch / 70ch", "purpose": "Empty-state copy / verdict / explanatory prose / footnotes." }
+    ],
+    "browserSurfaces": {
+      "selection": "background var(--c-accent), color var(--c-accent-ink)",
+      "caret": "caret-color and accent-color var(--c-accent)",
+      "placeholder": "var(--c-ink-faint)",
+      "focusVisible": "2px solid var(--c-accent), 2px offset, 3px radius (global)",
+      "scrollbar": "11px, thumb var(--c-line-strong) with a 3px ground-coloured border, 99px radius, hover var(--c-ink-faint)",
+      "dialogBackdrop": "hsl(var(--c-shadow) / 0.45)",
+      "numerals": "tabular-nums on code, kbd, samp, pre, table"
+    },
+    "placeholders": [
+      { "name": "Wordmark \"Postmaster\"", "note": "Product name is undecided; ships only so the slot is not empty." },
+      { "name": "Blue envelope mark", "note": "Drawn inline in Shell.tsx and src/mark.svg. No logo asset, no identity decided. Replace both together." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single most important action on a screen; also the appearance of a navigation link that acts (actionLink).",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5.2v13.6M5.2 12h13.6\"/></svg>Add a domain</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid transparent; border-radius: 6px; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: background-color 150ms, border-color 150ms, color 150ms; } .ds-btn .ds-icon { width: 16px; height: 16px; flex-shrink: 0; } .ds-btn-primary { background: var(--c-accent, #2563eb); color: var(--c-accent-ink, #ffffff); } .ds-btn-primary:hover { background: var(--c-accent-hover, #1d4ed8); } .ds-btn-primary:focus-visible { outline: 2px solid var(--c-accent, #2563eb); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.45; pointer-events: none; }"
+    },
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button-default",
+      "description": "The workhorse action — Refresh, Copy, Add. Hairline border on the raised surface; never filled.",
+      "html": "<button class=\"ds-btn ds-btn-default\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20.4 12a8.4 8.4 0 1 1-2.5-6\"/><path d=\"M20.4 3.6v4.6h-4.6\"/></svg>Re-check</button>",
+      "css": ".ds-btn-default { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid var(--c-line-strong, #d5d1cc); border-radius: 6px; background: var(--c-raised, #ffffff); color: var(--c-ink, #1c1917); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: background-color 150ms, border-color 150ms; } .ds-btn-default .ds-icon { width: 16px; height: 16px; flex-shrink: 0; } .ds-btn-default:hover { background: var(--c-sunken, #f5f4f2); } .ds-btn-default:focus-visible { outline: 2px solid var(--c-accent, #2563eb); outline-offset: 2px; } .ds-btn-default:disabled { opacity: 0.45; pointer-events: none; }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive action, always paired with inline confirmation rather than a modal. Outlined, never a filled red block.",
+      "html": "<button class=\"ds-btn-danger\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3.8 7h16.4\"/><path d=\"M9.4 7V4.4h5.2V7\"/><path d=\"M6.2 7l.9 13.6h9.8L17.8 7\"/></svg>Remove domain</button>",
+      "css": ".ds-btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 12px; border: 1px solid var(--c-line, #e8e5e2); border-radius: 6px; background: transparent; color: var(--c-bad, #b42318); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; cursor: pointer; transition: background-color 150ms, border-color 150ms; } .ds-btn-danger .ds-icon { width: 16px; height: 16px; flex-shrink: 0; } .ds-btn-danger:hover { background: var(--c-bad-soft, #fdf3f2); border-color: color-mix(in oklab, var(--c-bad, #b42318) 40%, transparent); } .ds-btn-danger:focus-visible { outline: 2px solid var(--c-accent, #2563eb); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "The one control style: hairline-strong border on the raised surface, accent border plus soft accent ring on focus.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"example.com\" />",
+      "css": ".ds-input { width: 100%; height: 36px; padding: 0 10px; border: 1px solid var(--c-line-strong, #d5d1cc); border-radius: 6px; background: var(--c-raised, #ffffff); color: var(--c-ink, #1c1917); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; transition: border-color 150ms, box-shadow 150ms; } .ds-input::placeholder { color: var(--c-ink-faint, #78716c); } .ds-input:hover { border-color: color-mix(in oklab, var(--c-ink-faint, #78716c) 60%, transparent); } .ds-input:focus { outline: none; border-color: var(--c-accent, #2563eb); box-shadow: 0 0 0 2px color-mix(in oklab, var(--c-accent, #2563eb) 25%, transparent); } .ds-input[aria-invalid=\"true\"] { border-color: var(--c-bad, #b42318); } .ds-input:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sidebar navigation row. Active state is a blue wash fill with accent text and icon — never a bar or underline.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item ds-nav-item-active\" href=\"#\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4.2 17.5a9 9 0 1 1 15.6 0\"/><path d=\"M12 12.8 16 8.5\"/></svg>Overview</a><a class=\"ds-nav-item\" href=\"#\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z\"/><path d=\"M3.3 9.5h17.4M3.3 14.5h17.4\"/><path d=\"M12 3c-4 5.4-4 12.6 0 18 4-5.4 4-12.6 0-18Z\"/></svg>Domains</a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 2px; width: 216px; padding: 12px; background: var(--c-panel, #fafaf9); } .ds-nav-item { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 6px; color: var(--c-ink-muted, #56514c); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; font-weight: 500; text-decoration: none; transition: background-color 150ms, color 150ms; } .ds-nav-item .ds-icon { width: 16px; height: 16px; flex-shrink: 0; } .ds-nav-item:hover { background: var(--c-sunken, #f5f4f2); color: var(--c-ink, #1c1917); } .ds-nav-item-active, .ds-nav-item-active:hover { background: var(--c-accent-soft, #eef4ff); color: var(--c-accent, #2563eb); }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip-ok",
+      "description": "A labelled DNS record status. Three tones: verified (green wash), waiting (sunken, filled dot), failing (red wash). Reports state only — not a filter or tag.",
+      "html": "<span class=\"ds-chip ds-chip-ok\"><svg class=\"ds-chip-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m4.8 12.6 4.8 4.8L19.2 6.6\"/></svg><span class=\"ds-chip-label\">SPF</span><span class=\"ds-chip-sep\" aria-hidden=\"true\">·</span><span>verified</span></span> <span class=\"ds-chip ds-chip-wait\"><svg class=\"ds-chip-icon\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><path d=\"M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2Z\"/></svg><span class=\"ds-chip-label\">DKIM</span><span class=\"ds-chip-sep\" aria-hidden=\"true\">·</span><span>pending</span></span> <span class=\"ds-chip ds-chip-bad\"><svg class=\"ds-chip-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3.6 2.4 20.4h19.2L12 3.6Z\"/><path d=\"M12 9.6v4.6\"/><path d=\"M12 17.2h.01\"/></svg><span class=\"ds-chip-label\">DMARC</span><span class=\"ds-chip-sep\" aria-hidden=\"true\">·</span><span>missing</span></span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border: 1px solid; border-radius: 4px; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.6875rem; line-height: 1rem; font-weight: 500; } .ds-chip-icon { width: 12px; height: 12px; flex-shrink: 0; } .ds-chip-label { text-transform: uppercase; letter-spacing: 0.025em; } .ds-chip-sep { color: var(--c-ink-faint, #78716c); } .ds-chip-ok { border-color: color-mix(in oklab, var(--c-ok, #15803d) 35%, transparent); background: var(--c-ok-soft, #f1faf3); color: var(--c-ok, #15803d); } .ds-chip-wait { border-color: var(--c-line-strong, #d5d1cc); background: var(--c-sunken, #f5f4f2); color: var(--c-ink-muted, #56514c); } .ds-chip-bad { border-color: color-mix(in oklab, var(--c-bad, #b42318) 35%, transparent); background: var(--c-bad-soft, #fdf3f2); color: var(--c-bad, #b42318); }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "The one container: 8px radius, hairline border on the raised surface, optional hairline-separated header, rows reaching the edges.",
+      "html": "<section class=\"ds-panel\"><header class=\"ds-panel-head\"><div><h2 class=\"ds-panel-title\">Domains</h2><p class=\"ds-panel-desc\">Status is read from live DNS, not remembered.</p></div></header><ul class=\"ds-panel-list\"><li class=\"ds-panel-row\"><span class=\"ds-mono-inline\">mail.example.com</span><span class=\"ds-panel-meta\">checked 4m ago</span></li><li class=\"ds-panel-row\"><span class=\"ds-mono-inline\">send.acme.dev</span><span class=\"ds-panel-meta\">checked 2h ago</span></li></ul></section>",
+      "css": ".ds-panel { border: 1px solid var(--c-line, #e8e5e2); border-radius: 8px; background: var(--c-raised, #ffffff); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; overflow: hidden; } .ds-panel-head { padding: 12px 16px; border-bottom: 1px solid var(--c-line, #e8e5e2); } .ds-panel-title { margin: 0; font-size: 0.9375rem; font-weight: 600; color: var(--c-ink, #1c1917); } .ds-panel-desc { margin: 2px 0 0; font-size: 0.8125rem; color: var(--c-ink-muted, #56514c); } .ds-panel-list { margin: 0; padding: 0; list-style: none; } .ds-panel-row { display: flex; align-items: center; gap: 16px; padding: 12px 16px; transition: background-color 150ms; } .ds-panel-row + .ds-panel-row { border-top: 1px solid var(--c-line, #e8e5e2); } .ds-panel-row:hover { background: var(--c-sunken, #f5f4f2); } .ds-mono-inline { font-family: \"JetBrains Mono\", ui-monospace, Menlo, monospace; font-size: 0.9375rem; color: var(--c-ink, #1c1917); } .ds-panel-meta { margin-left: auto; font-size: 0.75rem; color: var(--c-ink-muted, #56514c); }"
+    },
+    {
+      "name": "Copyable Machine Value",
+      "kind": "custom",
+      "refersTo": "machine-value",
+      "description": "A literal the user will paste into a registrar form: mono on the sunken surface with a hairline border, and a small default button that swaps to a check and \"Copied\" for 1.6s.",
+      "html": "<div class=\"ds-copy\"><code class=\"ds-copy-value\">v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A</code><button class=\"ds-btn-sm\"><svg class=\"ds-icon-sm\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.6 8.4h10.2a1.4 1.4 0 0 1 1.4 1.4v10.2a1.4 1.4 0 0 1-1.4 1.4H9.6a1.4 1.4 0 0 1-1.4-1.4V9.8a1.4 1.4 0 0 1 1.4-1.4Z\"/><path d=\"M15.8 5.6V4.2a1.4 1.4 0 0 0-1.4-1.4H4.2a1.4 1.4 0 0 0-1.4 1.4v10.2a1.4 1.4 0 0 0 1.4 1.4h1.4\"/></svg>Copy</button></div>",
+      "css": ".ds-copy { display: flex; align-items: flex-start; gap: 8px; } .ds-copy-value { flex: 1 1 auto; min-width: 0; padding: 6px 8px; border: 1px solid var(--c-line, #e8e5e2); border-radius: 4px; background: var(--c-sunken, #f5f4f2); color: var(--c-ink, #1c1917); font-family: \"JetBrains Mono\", ui-monospace, Menlo, monospace; font-size: 0.75rem; line-height: 1.625; word-break: break-all; font-variant-numeric: tabular-nums; } .ds-btn-sm { display: inline-flex; flex-shrink: 0; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border: 1px solid var(--c-line-strong, #d5d1cc); border-radius: 6px; background: var(--c-raised, #ffffff); color: var(--c-ink, #1c1917); font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: background-color 150ms; } .ds-btn-sm .ds-icon-sm { width: 14px; height: 14px; } .ds-btn-sm:hover { background: var(--c-sunken, #f5f4f2); } .ds-btn-sm:focus-visible { outline: 2px solid var(--c-accent, #2563eb); outline-offset: 2px; }"
+    },
+    {
+      "name": "Readiness Verdict",
+      "kind": "custom",
+      "description": "The signature element: one 20px sentence, uncontained, saying whether the account can send right now, with the blocking clause set in the accent and linked to its fix.",
+      "html": "<p class=\"ds-verdict\">You can't send yet — <a class=\"ds-verdict-clause\" href=\"#\">mail.example.com: the DKIM record is not published</a>.</p>",
+      "css": ".ds-verdict { max-width: 62ch; margin: 0; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 1.25rem; line-height: 1.375; font-weight: 500; letter-spacing: -0.01em; text-wrap: balance; color: var(--c-ink, #1c1917); } .ds-verdict-clause { color: var(--c-accent, #2563eb); font-weight: 500; text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--c-accent, #2563eb) 40%, transparent); text-underline-offset: 0.2em; } .ds-verdict-clause:hover { text-decoration-color: var(--c-accent, #2563eb); } .ds-verdict-clause:focus-visible { outline: 2px solid var(--c-accent, #2563eb); outline-offset: 2px; border-radius: 3px; }"
+    },
+    {
+      "name": "Tinted Note",
+      "kind": "custom",
+      "description": "A borderless washed block carrying a caveat or a result. The tint is the entire signal; adding a border makes it read as a card inside a card.",
+      "html": "<p class=\"ds-note ds-note-warn\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3.6 2.4 20.4h19.2L12 3.6Z\"/><path d=\"M12 9.6v4.6\"/><path d=\"M12 17.2h.01\"/></svg><span>This record is not published yet, so sending from this domain will be refused.</span></p>",
+      "css": ".ds-note { display: flex; align-items: flex-start; gap: 8px; max-width: 68ch; margin: 0; padding: 10px 12px; border: none; border-radius: 6px; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 0.8125rem; line-height: 1.625; } .ds-note .ds-icon { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; } .ds-note-warn { background: var(--c-warn-soft, #fdf8ec); color: var(--c-warn, #9a5b06); } .ds-note-ok { background: var(--c-ok-soft, #f1faf3); color: var(--c-ok, #15803d); } .ds-note-bad { background: var(--c-bad-soft, #fdf3f2); color: var(--c-bad, #b42318); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Straight Convention",
+    "overview": "This is the category standard, chosen on purpose over six distinctive alternatives, and held to Resend's level of finish rather than approximated. Nothing here is trying to be memorable as a surface. A fixed rail, a titled content column, hairline-bordered panels, warm neutral text, one blue accent: a developer who has used any modern sending dashboard already knows where everything is, and the entire craft budget goes into the parts that usually go soft — real hover, focus-visible, disabled and pending states on every control, self-hosted faces with no system-font flash, a full dark token set, theming for the browser surfaces nobody draws (selection, caret, placeholder, focus ring, scrollbar, dialog backdrop).\n\nDensity is that of an operator's tool. Body text runs at 13px, panel titles at 15px, and there is exactly one large statement per screen. The one idea the system owns is textual, not decorative: the Overview opens with a plain sentence saying whether this account can send right now, with the blocking clause set in the accent and linked to the fix. It is not a card, not a banner, not a metric tile. The refusal that makes room for it is a product truth — the backend records no delivery events, so the hero-metric row the category opens with could only be fabricated or empty.\n\nThe only visual world-building is material restraint: two neutral surface layers (a slightly warmer sidebar against the content ground), hairline borders instead of fills or shadows, one soft shadow held back for the floating notice, and tinted blocks whose tint alone carries the signal. Confirmed rejection: cool/zinc grays — the ramp is the warm stone family, and a review pass corrected a cool slip back to warm. The wordmark \"Postmaster\" and the blue envelope mark are placeholders occupying the slot until a real identity exists; they are not brand and carry no weight in this system.",
+    "keyCharacteristics": [
+      "Warm-neutral stone ramp, one blue accent, semantic colour only on record status",
+      "Hairline borders as the primary structural device; shadows near-absent",
+      "Fixed rem type scale (11/12/13/15/17/20/24 at ~1.15 ratio), no fluid type",
+      "Archivo for all UI text, JetBrains Mono for machine values only",
+      "Every interactive primitive ships hover, focus-visible, disabled and pending states",
+      "Full light and dark token sets, system-following with a manual override",
+      "No modals anywhere; destructive confirmation happens inline"
+    ],
+    "rules": [
+      { "name": "The One Definition Rule", "body": "Every colour in this app resolves to a --c-* property in src/index.css. A hex, rgb(), or oklch() literal written in a component is a defect, not a variation.", "section": "colors" },
+      { "name": "The Warm Neutral Rule", "body": "The ramp is warm stone. Cool and zinc grays are out — this was found in review and corrected. If a neutral looks blue-gray next to #fafaf9, it is wrong.", "section": "colors" },
+      { "name": "The Faint Floor Rule", "body": "ink-faint is the contrast floor of the system (4.84:1 on white, 5.15:1 on the dark ground) and is also the global ::placeholder colour. It may never be lightened below 4.5:1, and nothing may sit below it.", "section": "colors" },
+      { "name": "The Reserved Accent Rule", "body": "Accent means one of three things: a primary action, the current selection, or focus. Text is not accent-coloured to be interesting; a link inside prose earns accent only when it is the way out of a stated blocker.", "section": "colors" },
+      { "name": "The Status-Only Semantics Rule", "body": "Green, amber and red report record and request state. They never set mood, never brand a section, and never tint a whole panel.", "section": "colors" },
+      { "name": "The Machine Value Rule", "body": "Mono is for values a machine produced or will consume — records, keys, domains, addresses, tokens. Never for headings, never for labels, never as a flavour of \"developer tool\".", "section": "typography" },
+      { "name": "The Fixed Ramp Rule", "body": "Type sizes come from the fixed rem scale (--text-11 … --text-24, ~1.15 ratio). No clamp(), no vw units, no fluid type in product UI: an operator's tool should not reflow its type as the window moves.", "section": "typography" },
+      { "name": "The One Statement Rule", "body": "A screen gets one piece of large type (the 24px title) and at most one 20px statement. Everything else is 11-15px.", "section": "typography" },
+      { "name": "The Hairline Rule", "body": "Structure is drawn with 1px borders, not fills and not shadows. If a boundary needs emphasis, go from line to line-strong, not to a shadow.", "section": "elevation" },
+      { "name": "The Overlay-Only Shadow Rule", "body": "shadow-pop belongs to elements that leave the page plane. A resting panel, row, chip, button or input carries no shadow.", "section": "elevation" },
+      { "name": "The Bare Tint Rule", "body": "Tinted blocks (ok-soft, warn-soft, bad-soft) carry no border — the tint is the signal. A bordered tint inside a panel reads as a card inside a card.", "section": "elevation" },
+      { "name": "The Already-Visible Rule", "body": "Both animations use animation-fill-mode: backwards and animate from a hidden state toward the element's normal visible default. If the animation never runs, nothing is hidden. Both are animation: none under prefers-reduced-motion: reduce.", "section": "components" },
+      { "name": "The Colour-Only Transition Rule", "body": "Interactive feedback is transition-colors at 150ms. Nothing in this system translates, scales, or shadows on hover.", "section": "components" }
+    ],
+    "dos": [
+      "Do define every colour once in src/index.css as a --c-* property, in both light and dark blocks, and reach it through the Tailwind bridge (bg-panel, text-ink-muted).",
+      "Do keep the neutral ramp warm (stone), matching #fafaf9 / #1c1917 in light and #0c0a09 / #fafaf9 in dark.",
+      "Do reserve the accent for primary actions, current selection and focus; reserve green/amber/red for record and request status.",
+      "Do set machine values — DNS records, keys, selectors, domains, addresses, tokens — in JetBrains Mono, and everything else in Archivo.",
+      "Do take type sizes from the fixed --text-* scale.",
+      "Do build screens from the ui.tsx primitives, so hover, focus-visible, disabled and pending arrive for free.",
+      "Do draw structure with 1px hairlines and the two neutral surface steps.",
+      "Do confirm destructive actions inline with ConfirmInline, in place, next to the thing being destroyed.",
+      "Do give tinted blocks a wash background and no border.",
+      "Do leave a screen short when the backend has nothing more to say; empty space is honest here.",
+      "Do treat the \"Postmaster\" wordmark and the envelope mark as placeholders, replaced together when a real identity exists."
+    ],
+    "donts": [
+      "Don't write a hex, rgb(), oklch() or arbitrary Tailwind colour/shadow value in a component — including shadow-[...]. If a value is needed, it becomes a token first.",
+      "Don't introduce cool or zinc grays, or a second brand hue.",
+      "Don't lighten ink-faint, or add any text colour below it; it is the placeholder colour and the contrast floor.",
+      "Don't use fluid or clamp() type, and don't add type sizes outside the --text-* ramp.",
+      "Don't set mono for headings, labels or body copy to look technical.",
+      "Don't add a shadow to a resting element; shadow-pop is for things that float above the page.",
+      "Don't put a border on a tinted block.",
+      "Don't add a modal or dialog for confirmation — there is no modal in this system.",
+      "Don't add an icon library, an icon font, or emoji; extend the authored 24-grid/1.5-stroke set in ui.tsx instead.",
+      "Don't add a tailwind.config file; the system is configured entirely in CSS via @theme inline, and a config file would create a second source of truth.",
+      "Don't add a fourth radius or a second focus treatment.",
+      "Don't fabricate a metric, chart, or hero-stat row: the backend records no delivery events, so any such surface would be empty or invented.",
+      "Don't add personality to compensate for the conventionality. The category standard executed straight is the chosen direction, not a gap to be filled."
+    ]
+  }
+}
