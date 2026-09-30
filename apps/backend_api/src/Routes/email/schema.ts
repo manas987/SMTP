@@ -5,6 +5,7 @@ export const sendListEmailSchema = z.object({
   senderId: z.int().positive(),
   subject: z.string().min(1),
   body: z.string().min(1),
+  html: z.string().optional(),
 });
 
 export const sendSingleEmailSchema = z.object({
@@ -12,4 +13,5 @@ export const sendSingleEmailSchema = z.object({
   senderId: z.int().positive(),
   subject: z.string().min(1),
   body: z.string().min(1),
+  html: z.string().optional(),
 });

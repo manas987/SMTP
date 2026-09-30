@@ -17,7 +17,7 @@ emailRoutes.post("/send/list", authMiddleware, async (req, res) => {
   }
 
   const userId = res.locals.userId;
-  const { listId, senderId, subject, body } = checkInput.data;
+  const { listId, senderId, subject, body, html } = checkInput.data;
 
   try {
     const result = await pool.query(
@@ -49,12 +49,48 @@ emailRoutes.post("/send/list", authMiddleware, async (req, res) => {
 
     const recipients = result.rows.map((row) => row.recipient_email);
 
+    const fromDomain = senderEmail
+      .slice(senderEmail.lastIndexOf("@") + 1)
+      .toLowerCase();
+
+    const resultdkim = await pool.query(
+      `
+  SELECT
+    domain,
+    dkim_selector
+  FROM sending_domains
+  WHERE domain = $1
+    AND user_id = $2
+    AND status = 'verified'
+    AND dkim_status = 'verified'
+  LIMIT 1
+  `,
+      [fromDomain, userId],
+    );
+
+    if (!resultdkim.rowCount) {
+      return res.status(400).json({
+        status: "error",
+        error: `Sending domain ${fromDomain} is not ready for sending`,
+      });
+    }
+
+    const domain = resultdkim.rows[0];
+
+    if (!domain.dkim_selector) {
+      return res.status(400).json({
+        status: "400",
+        error: `DKIM is not configured for ${fromDomain}`,
+      });
+    }
+
     for (const recipient of recipients) {
       await emailQueue.add("send-email", {
         from: senderEmail,
         to: recipient,
         subject,
         body,
+        html,
       });
     }
 
@@ -83,7 +119,7 @@ emailRoutes.post("/send/one", authMiddleware, async (req, res) => {
   }
 
   const userId = res.locals.userId;
-  const { to, senderId, subject, body } = checkInput.data;
+  const { to, senderId, subject, body, html } = checkInput.data;
 
   try {
     const result = await pool.query(
@@ -107,11 +143,47 @@ emailRoutes.post("/send/one", authMiddleware, async (req, res) => {
 
     const sender = result.rows[0];
 
+    const fromDomain = sender.email
+      .slice(sender.email.lastIndexOf("@") + 1)
+      .toLowerCase();
+
+    const resultdkim = await pool.query(
+      `
+  SELECT
+    domain,
+    dkim_selector
+  FROM sending_domains
+  WHERE domain = $1
+    AND user_id = $2
+    AND status = 'verified'
+    AND dkim_status = 'verified'
+  LIMIT 1
+  `,
+      [fromDomain, userId],
+    );
+
+    if (!resultdkim.rowCount) {
+      return res.status(400).json({
+        status: "error",
+        error: `Sending domain ${fromDomain} is not ready for sending`,
+      });
+    }
+
+    const domain = resultdkim.rows[0];
+
+    if (!domain.dkim_selector) {
+      return res.status(400).json({
+        status: "400",
+        error: `DKIM is not configured for ${fromDomain}`,
+      });
+    }
+
     await emailQueue.add("send-email", {
       from: sender.email,
       to,
       subject,
       body,
+      html,
     });
 
     return res.status(202).json({
@@ -141,10 +213,6 @@ emailRoutes.post("/send/one/dev", async (req, res) => {
       subject,
       body,
     });
-
-    console.log("JOB ADDED:", job.id);
-
-    console.log("nigga");
 
     return res.status(202).json({
       status: "success",

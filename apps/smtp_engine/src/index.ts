@@ -1,6 +1,7 @@
-import { Worker } from "bullmq";
+import { Worker, UnrecoverableError } from "bullmq";
 import Redis from "ioredis";
 import { smtpEngine } from "./SMTP/smtp-engine";
+import { SMTPError } from "./SMTP/error";
 import { pool } from "./db";
 
 export const redis = new Redis({
@@ -17,7 +18,7 @@ const worker = new Worker(
     const atIndex = from.lastIndexOf("@");
 
     if (atIndex === -1) {
-      throw new Error("Invalid sender email");
+      throw new UnrecoverableError("Invalid sender email");
     }
 
     const domainName = from.slice(atIndex + 1).toLowerCase();
@@ -39,29 +40,39 @@ const worker = new Worker(
     );
 
     if (!result.rowCount) {
-      throw new Error(`Sending domain ${domainName} is not verified`);
+      throw new UnrecoverableError(`Sending domain ${domainName} is not verified`);
     }
 
     const domain = result.rows[0];
 
     if (!domain.dkim_selector || !domain.dkim_private_key) {
-      throw new Error(`DKIM is not configured for ${domainName}`);
+      throw new UnrecoverableError(`DKIM is not configured for ${domainName}`);
     }
 
-    await smtpEngine({
-      from,
-      to,
-      subject,
-      body,
-      html,
-      attachments,
+    try {
+      await smtpEngine({
+        from,
+        to,
+        subject,
+        body,
+        html,
+        attachments,
 
-      dkim: {
-        domain: domain.domain,
-        selector: domain.dkim_selector,
-        privateKey: domain.dkim_private_key,
-      },
-    });
+        dkim: {
+          domain: domain.domain,
+          selector: domain.dkim_selector,
+          privateKey: domain.dkim_private_key,
+        },
+      });
+    } catch (error) {
+      if (error instanceof SMTPError && error.kind === "temporary") {
+        throw error;
+      }
+
+      throw new UnrecoverableError(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
   },
   {
     connection: redis,

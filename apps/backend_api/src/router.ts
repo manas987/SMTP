@@ -15,4 +15,4 @@ router.use("/email", emailRoutes);
 
 router.use("/sender", senderMailRoutes);
 
-router.use("domain", domainRoutes);
+router.use("/domain", domainRoutes);

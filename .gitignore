@@ -36,3 +36,11 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# AI tooling
+.claude/
+.impeccable/
+CLAUDE.md
+PRODUCT.md
+DESIGN.md
+BACKEND_NOTES.md

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import crypto from "crypto";
 import { resolveTxt } from "dns/promises";
-
+import { generateDkimKeys } from "./dkim-keys";
 import { authMiddleware } from "../../middleware/auth";
 import { pool } from "../../../migrations/db";
 
@@ -10,10 +10,11 @@ import {
   verifyDomainSchema,
   deleteDomainSchema,
 } from "./schema";
+import { verifyDkim, verifyDmarc, verifySpf } from "./auth-dns";
 
 export const domainRoutes = Router();
 
-domainRoutes.post("/domain/create", authMiddleware, async (req, res) => {
+domainRoutes.post("/create", authMiddleware, async (req, res) => {
   const checkInput = createDomainSchema.safeParse(req.body);
 
   if (!checkInput.success) {
@@ -71,7 +72,7 @@ domainRoutes.post("/domain/create", authMiddleware, async (req, res) => {
   }
 });
 
-domainRoutes.get("/domain/read", authMiddleware, async (req, res) => {
+domainRoutes.get("/read", authMiddleware, async (req, res) => {
   const userId = res.locals.userId;
 
   try {
@@ -81,7 +82,12 @@ domainRoutes.get("/domain/read", authMiddleware, async (req, res) => {
           id,
           domain,
           status,
-          verified_at
+          verified_at,
+          dkim_selector,
+          spf_status,
+          dkim_status,
+          dmarc_status,
+          auth_checked_at
         FROM sending_domains
         WHERE user_id = $1
         ORDER BY id ASC
@@ -103,7 +109,7 @@ domainRoutes.get("/domain/read", authMiddleware, async (req, res) => {
   }
 });
 
-domainRoutes.post("/domain/verify", authMiddleware, async (req, res) => {
+domainRoutes.post("/verify", authMiddleware, async (req, res) => {
   const checkInput = verifyDomainSchema.safeParse(req.body);
 
   if (!checkInput.success) {
@@ -171,23 +177,40 @@ domainRoutes.post("/domain/verify", authMiddleware, async (req, res) => {
       });
     }
 
+    const dkim = generateDkimKeys();
+
     const updated = await pool.query(
       `
-        UPDATE sending_domains
-        SET
-          status = 'verified',
-          verified_at = NOW(),
-          verification_token = NULL
-        WHERE id = $1
-          AND user_id = $2
-        RETURNING id, domain, status, verified_at
-        `,
-      [domainId, userId],
+    UPDATE sending_domains
+    SET
+      status = 'verified',
+      verified_at = NOW(),
+      verification_token = NULL,
+      dkim_selector = $1,
+      dkim_private_key = $2,
+      dkim_public_key = $3
+    WHERE id = $4
+      AND user_id = $5
+    RETURNING
+      id,
+      domain,
+      status,
+      verified_at,
+      dkim_selector
+  `,
+      [dkim.selector, dkim.privateKey, dkim.publicKey, domainId, userId],
     );
 
     return res.status(200).json({
       status: "success",
       domain: updated.rows[0],
+
+      dkim: {
+        status: "pending",
+        name: `${dkim.selector}._domainkey.${domain.domain}`,
+        type: "TXT",
+        value: dkim.dnsValue,
+      },
     });
   } catch (error) {
     console.error(error);
@@ -199,7 +222,108 @@ domainRoutes.post("/domain/verify", authMiddleware, async (req, res) => {
   }
 });
 
-domainRoutes.delete("/domain/delete", authMiddleware, async (req, res) => {
+domainRoutes.post("/verify-auth", authMiddleware, async (req, res) => {
+  try {
+    const userId = res.locals.userId;
+
+    const body = req.body as {
+      id: number;
+    };
+
+    const result = await pool.query(
+      `
+      SELECT
+        id,
+        domain,
+        status,
+        dkim_selector,
+        dkim_public_key
+      FROM sending_domains
+      WHERE id = $1
+        AND user_id = $2
+      `,
+      [body.id, userId],
+    );
+
+    if (!result.rowCount) {
+      return res.status(404).send({
+        error: "Domain not found",
+      });
+    }
+
+    const domain = result.rows[0];
+
+    if (domain.status !== "verified") {
+      return res.status(400).send({
+        error: "Verify domain ownership first",
+      });
+    }
+
+    if (!domain.dkim_selector || !domain.dkim_public_key) {
+      return res.status(400).send({
+        error: "DKIM has not been generated go to /domain/verify",
+      });
+    }
+
+    const spf = await verifySpf(domain.domain);
+
+    const dkim = await verifyDkim(
+      domain.domain,
+      domain.dkim_selector,
+      domain.dkim_public_key,
+    );
+
+    const dmarc = await verifyDmarc(domain.domain);
+
+    await pool.query(
+      `
+      UPDATE sending_domains
+      SET
+        spf_status = $1,
+        spf_record = $2,
+        dkim_status = $3,
+        dmarc_status = $4,
+        dmarc_record = $5,
+        auth_checked_at = NOW()
+      WHERE id = $6
+        AND user_id = $7
+      `,
+      [
+        spf.status,
+        spf.record,
+        dkim.status,
+        dmarc.status,
+        dmarc.record,
+        domain.id,
+        userId,
+      ],
+    );
+
+    return res.send({
+      domain: domain.domain,
+
+      ownership: domain.status,
+
+      spf,
+
+      dkim: {
+        ...dkim,
+        hostname: `${domain.dkim_selector}._domainkey.${domain.domain}`,
+      },
+
+      dmarc,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      status: "error",
+      error: "internal server error",
+    });
+  }
+});
+
+domainRoutes.delete("/delete", authMiddleware, async (req, res) => {
   const checkInput = deleteDomainSchema.safeParse(req.body);
 
   if (!checkInput.success) {

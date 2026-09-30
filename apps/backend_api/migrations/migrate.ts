@@ -2,7 +2,7 @@ import path from "path";
 import { pool } from "./db";
 import fs from "fs/promises";
 
-async function migrate() {
+export async function migrate() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS migrations (
       id SERIAL PRIMARY KEY,
@@ -28,7 +28,7 @@ async function migrate() {
 
     console.log(`Running ${file}`);
 
-    const sql = await fs.readFile(path.join("migations", file), "utf8");
+    const sql = await fs.readFile(path.join("./migrations", file), "utf8");
 
     const client = await pool.connect();
 
@@ -51,8 +51,4 @@ async function migrate() {
       client.release();
     }
   }
-
-  await pool.end();
 }
-
-migrate().catch(console.error);
